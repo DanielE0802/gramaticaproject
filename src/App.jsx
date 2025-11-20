@@ -7,9 +7,10 @@
  * - Orquestar la comunicación entre componentes
  * - Manejar la lógica de análisis de problemas
  * - Proporcionar el layout general
+ * - Controlar tema claro/oscuro
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 // Importar componentes
@@ -30,6 +31,23 @@ function App() {
   const [solution, setSolution] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Aplicar tema al body
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  // Toggle del tema
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   /**
    * Función principal para analizar el problema ingresado
@@ -93,14 +111,14 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className="min-h-screen bg-[var(--background)] theme-transition">
       {/* Header */}
-      <Header />
+      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
       {/* Contenido principal */}
-      <main className="app-main">
+      <main className="container mx-auto px-6 py-16 max-w-7xl">
         {/* Sección de entrada */}
-        <div className="section-spacing fade-in">
+        <div className="mb-16 animate-fade-in">
           <ProblemInput 
             onAnalyze={handleAnalyze}
             isLoading={isLoading}
@@ -108,7 +126,7 @@ function App() {
         </div>
 
         {/* Sección de resultados */}
-        <div className="fade-in">
+        <div className="animate-fade-in-up">
           <ResultView 
             solution={solution}
             problemType={problemType}
